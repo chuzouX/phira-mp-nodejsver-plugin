@@ -469,7 +469,7 @@ declare module 'phira-plugin-api' {
 
     /** 注册 HTTP 路由（需要 ENABLE_WEB_SERVER=true） */
     registerRoute(method: PluginRouteMethod, routePath: string, handler: RequestHandler): void;
-    /** 挂载静态文件目录 */
+    /** 挂载静态文件目录（rootDir 为相对路径时，相对于插件的 res/ 目录解析） */
     serveStatic(mountPath: string, rootDir: string): void;
     /** 获取 Express 应用实例 */
     getExpressApp(): ExpressApp | undefined;
@@ -491,8 +491,38 @@ declare module 'phira-plugin-api' {
 
   // ======================== 插件模块 ========================
 
+  /**
+   * 插件元数据（plugin.yaml 文件格式）
+   */
+  export interface PluginMetadata {
+    /** 插件唯一标识符（必需） */
+    id: string;
+    /** 插件显示名称（必需） */
+    name: string;
+    /** 插件版本号（必需，推荐语义化版本） */
+    version: string;
+    /** 插件描述（可选） */
+    description?: string;
+    /** 作者信息（可选） */
+    author?: string;
+    /** 许可证（可选） */
+    license?: string;
+    /** 项目主页（可选） */
+    homepage?: string;
+    /** 仓库地址（可选） */
+    repository?: string;
+    /** 插件主文件，相对于 res/ 目录（可选，默认为 main.js） */
+    main?: string;
+    /** 依赖的其他插件（可选） */
+    dependencies?: Record<string, string>;
+    /** 要求的服务器版本（可选） */
+    serverVersion?: string;
+    /** 插件标签（可选） */
+    tags?: string[];
+  }
+
   export interface PluginModule {
-    /** 插件名称（可选，缺省使用目录名） */
+    /** 插件名称（已废弃，请使用 plugin.yaml 中的 name 字段） */
     name?: string;
     /** 插件初始化入口 */
     init(api: PluginApi): void | Promise<void>;
